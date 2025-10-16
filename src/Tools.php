@@ -43,8 +43,8 @@ class Tools extends ToolsCommon
         $servico = 'NFComRecepcao';
         $this->checkContingencyForWebServices($servico);
         if ($this->contingency->type != '') {
-            // Em modo de contingencia esses XMLs deverão ser modificados e re-assinados e retornados
-            // no parametro $xmls para serem armazenados pelo aplicativo pois serão alterados.
+            // Em modo de contingencia esses XMLs deverï¿½o ser modificados e re-assinados e retornados
+            // no parametro $xmls para serem armazenados pelo aplicativo pois serï¿½o alterados.
             $this->correctNFComForContingencyMode($Xml);
         }
 
@@ -87,7 +87,7 @@ class Tools extends ToolsCommon
         if (empty($uf) || empty($filter)) {
             throw new InvalidArgumentException('Sigla UF esta vazia ou CNPJ+IE+CPF vazios!');
         }
-        //carrega serviço
+        //carrega serviï¿½o
         $servico = 'NfeConsultaCadastro';
         $this->checkContingencyForWebServices($servico);
         $this->servico($servico, $uf, $this->tpAmb, true);
@@ -200,7 +200,7 @@ class Tools extends ToolsCommon
         if (empty($tpAmb)) {
             $tpAmb = $this->tpAmb;
         }
-        //carrega serviço
+        //carrega serviï¿½o
         $servico = 'NFComConsulta';
         $this->checkContingencyForWebServices($servico);
         $this->servico($servico, $uf, $tpAmb);
@@ -320,7 +320,7 @@ class Tools extends ToolsCommon
                 $std->desc = 'Cancelamento por substituicao';
                 break;
             default:
-                $msg = "O código do tipo de evento informado não corresponde a "
+                $msg = "O cï¿½digo do tipo de evento informado nï¿½o corresponde a "
                     . "nenhum evento estabelecido.";
                 throw new RuntimeException($msg);
         }

@@ -123,17 +123,17 @@ class Make
         if (empty($std->cDV)) {
             $std->cDV = 0;
         }
-         $std->cNF = str_pad($std->cNF, 7, '0', STR_PAD_LEFT);
+        $std->cNF = str_pad($std->cNF, 7, '0', STR_PAD_LEFT);
         if (intval($std->cNF) == intval($std->nNF)) {
             throw new InvalidArgumentException("O valor [{$std->cNF}] não é " . " aceitável para cNF,
               não pode ser igual ao de nNF, vide NT2019.001");
         }
-//         if (method_exists(Keys::class, 'cNFIsValid')) {
-//             if (!Keys::cNFIsValid($std->cNF)) {
-//                 throw new InvalidArgumentException("O valor [{$std->cNF}] para cNF " . " é invalido,
-//                  deve respeitar a NT2019.001");
-//             }
-//         }
+        //         if (method_exists(Keys::class, 'cNFIsValid')) {
+        //             if (!Keys::cNFIsValid($std->cNF)) {
+        //                 throw new InvalidArgumentException("O valor [{$std->cNF}] para cNF " . " é invalido,
+        //                  deve respeitar a NT2019.001");
+        //             }
+        //         }
 
         $identificador = '<ide> - ';
 
@@ -2539,10 +2539,16 @@ class Make
     {
         $possible = [
             'vProd',
+            'vBC',
+            'vICMS',
+            'vICMSDeson',
+            'vFCP',
             'vCOFINS',
             'vPIS',
-            'vFUNTTEL',
-            'vFUST',
+            'vRetPIS',
+            'vRetCofins',
+            'vRetCSLL',
+            'vIRRF',
             'vDesc',
             'vOutro',
             'vNF',
@@ -2551,6 +2557,8 @@ class Make
 
         $identificador = '<total> - ';
         $this->total = $this->dom->createElement("total");
+
+        // Adiciona vProd fora do ICMSTot
         $this->dom->addChild(
             $this->total,
             "vProd",
@@ -2558,6 +2566,41 @@ class Make
             true,
             $identificador . "Valor Total dos produtos e serviços"
         );
+
+        // Cria e preenche ICMSTot
+        $icmsTot = $this->dom->createElement("ICMSTot");
+        $this->total->appendChild($icmsTot);
+
+        $this->dom->addChild(
+            $icmsTot,
+            "vBC",
+            $this->conditionalNumberFormatting($std->vBC),
+            true,
+            $identificador . "Base de cálculo do ICMS"
+        );
+        $this->dom->addChild(
+            $icmsTot,
+            "vICMS",
+            $this->conditionalNumberFormatting($std->vICMS),
+            true,
+            $identificador . "Valor do ICMS"
+        );
+        $this->dom->addChild(
+            $icmsTot,
+            "vICMSDeson",
+            $this->conditionalNumberFormatting($std->vICMSDeson),
+            true,
+            $identificador . "Valor do ICMS desonerado"
+        );
+        $this->dom->addChild(
+            $icmsTot,
+            "vFCP",
+            $this->conditionalNumberFormatting($std->vFCP),
+            true,
+            $identificador . "Valor do FCP"
+        );
+
+        // Valores COFINS e PIS ficam diretos em total
         $this->dom->addChild(
             $this->total,
             "vCOFINS",
@@ -2572,20 +2615,58 @@ class Make
             true,
             "Valor do PIS"
         );
+
+        // Os demais campos ficam em total diretamente
         $this->dom->addChild(
             $this->total,
             "vFUNTTEL",
             $this->conditionalNumberFormatting($std->vFUNTTEL),
             true,
-            "Valor do FUNTTEL"
+            "Valor Total do Desconto"
         );
+
         $this->dom->addChild(
             $this->total,
             "vFUST",
             $this->conditionalNumberFormatting($std->vFUST),
             true,
-            "Valor do FUST"
+            "Valor Total do Desconto"
+        );             
+
+        // Cria RetTribTot com seus valores
+        $retTribTot = $this->dom->createElement("vRetTribTot");
+        $this->total->appendChild($retTribTot);
+
+        $this->dom->addChild(
+            $retTribTot,
+            "vRetPIS",
+            $this->conditionalNumberFormatting($std->vRetPIS),
+            true,
+            "Valor retido do PIS"
         );
+        $this->dom->addChild(
+            $retTribTot,
+            "vRetCofins",
+            $this->conditionalNumberFormatting($std->vRetCofins),
+            true,
+            "Valor retido da COFINS"
+        );
+        $this->dom->addChild(
+            $retTribTot,
+            "vRetCSLL",
+            $this->conditionalNumberFormatting($std->vRetCSLL),
+            true,
+            "Valor retido da CSLL"
+        );
+        $this->dom->addChild(
+            $retTribTot,
+            "vIRRF",
+            $this->conditionalNumberFormatting($std->vIRRF),
+            true,
+            "Valor retido do IRRF"
+        );
+
+        // Os demais campos ficam em total diretamente
         $this->dom->addChild(
             $this->total,
             "vDesc",
@@ -2607,8 +2688,10 @@ class Make
             true,
             "Valor Total da NFCom"
         );
+
         return $this->total;
     }
+
 
     /**
      * @param stdClass $std
@@ -2986,7 +3069,7 @@ class Make
      */
     public function tagGFatCentral(stdClass $std)
     {
-        $possible = ['CNPJ','cUF'];
+        $possible = ['CNPJ', 'cUF'];
         $std = $this->equilizeParameters($std, $possible);
 
         $identificador = '<gFatCentral> - ';

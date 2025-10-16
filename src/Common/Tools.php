@@ -110,7 +110,7 @@ class Tools
     protected $versao = '1.00';
     /**
      * urlPortal
-     * Instância do WebService
+     * Instï¿½ncia do WebService
      *
      * @var string
      */
@@ -210,19 +210,19 @@ class Tools
     /**
      * Return J or F from existing type in ASN.1 certificate
      * J - pessoa juridica (CNPJ)
-     * F - pessoa física (CPF)
+     * F - pessoa fï¿½sica (CPF)
      */
     public function getTypeOfPersonFromCertificate(): string
     {
         $cnpj = $this->certificate->getCnpj();
         $type = 'J';
         if (empty($cnpj)) {
-            //não é CNPJ, então verificar se é CPF
+            //nï¿½o ï¿½ CNPJ, entï¿½o verificar se ï¿½ CPF
             $cpf = $this->certificate->getCpf();
             if (!empty($cpf)) {
                 $type = 'F';
             } else {
-                //não foi localizado nem CNPJ e nem CPF esse certificado não é usável
+                //nï¿½o foi localizado nem CNPJ e nem CPF esse certificado nï¿½o ï¿½ usï¿½vel
                 //throw new RuntimeException('Faltam elementos CNPJ/CPF no certificado digital.');
                 $type = '';
             }
@@ -282,7 +282,7 @@ class Tools
         }
         //Verify version template is defined
         if (false === isset($this->availableVersions[$version])) {
-            throw new \InvalidArgumentException('Essa versão de layout não está disponível');
+            throw new \InvalidArgumentException('Essa versï¿½o de layout nï¿½o estï¿½ disponï¿½vel');
         }
 
         $this->versao = $version;
@@ -324,7 +324,7 @@ class Tools
         $uf = $this->config->siglaUF;
         if ($uf != UFList::getUFByCode((int)substr($chave, 0, 2))) {
             throw new \InvalidArgumentException(
-                "A chave da NFCom indicada [$chave] não pertence a [$uf]."
+                "A chave da NFCom indicada [$chave] nï¿½o pertence a [$uf]."
             );
         }
         return $uf;
@@ -339,7 +339,7 @@ class Tools
     public function signNFCom(string $xml): string
     {
         if (empty($xml)) {
-            throw new InvalidArgumentException('O argumento xml passado para ser assinado está vazio.');
+            throw new InvalidArgumentException('O argumento xml passado para ser assinado estï¿½ vazio.');
         }
         //remove all invalid strings
         $xml = Strings::clearXmlString($xml);
@@ -402,7 +402,7 @@ class Tools
         if (!empty($type)) {
             if ($type !== 'SVCRS' && $type !== 'SVCAN') {
                 throw new RuntimeException(
-                    "Esse modo de contingência [$type] não possue webservice próprio, portanto não haverão envios."
+                    "Esse modo de contingï¿½ncia [$type] nï¿½o possue webservice prï¿½prio, portanto nï¿½o haverï¿½o envios."
                 );
             }
         }
@@ -453,21 +453,21 @@ class Tools
                 throw new \RuntimeException("Servico [$service] indisponivel UF [$uf] ou modelo [$this->modelo]");
             }
         }
-        //NT 2024.002 1.00 Maio/2024, comentário P08 elemento cOrgao
+        //NT 2024.002 1.00 Maio/2024, comentï¿½rio P08 elemento cOrgao
         if ($uf === 'SVRS') {
             $this->urlcUF = 92;
         } else {
-            $this->urlcUF = $this->getcUF($uf); //recuperação do cUF
+            $this->urlcUF = $this->getcUF($uf); //recuperaï¿½ï¿½o do cUF
             if ($this->urlcUF > 91) {
                 $this->urlcUF = $this->getcUF($this->config->siglaUF); //foi solicitado dado de SVCRS ou SVCAN
             }
         }
-        $this->urlVersion = $stdServ->$service->version; //recuperação da versão
-        $this->urlService = $stdServ->$service->url; //recuperação da url do serviço
-        $this->urlMethod = $stdServ->$service->method; //recuperação do método
-        $this->urlOperation = $stdServ->$service->operation; //recuperação da operação
+        $this->urlVersion = $stdServ->$service->version; //recuperaï¿½ï¿½o da versï¿½o
+        $this->urlService = $stdServ->$service->url; //recuperaï¿½ï¿½o da url do serviï¿½o
+        $this->urlMethod = $stdServ->$service->method; //recuperaï¿½ï¿½o do mï¿½todo
+        $this->urlOperation = $stdServ->$service->operation; //recuperaï¿½ï¿½o da operaï¿½ï¿½o
         $this->urlNamespace = sprintf("%s/wsdl/%s", $this->urlPortal, $this->urlOperation); //monta namespace
-        //montagem do cabeçalho da comunicação SOAP
+        //montagem do cabeï¿½alho da comunicaï¿½ï¿½o SOAP
         $this->urlHeader = Header::get($this->urlNamespace, $this->urlcUF, $this->urlVersion);
         $this->urlAction = "\"$this->urlNamespace/$this->urlMethod\"";
     }
@@ -513,7 +513,7 @@ class Tools
     protected function addQRCode(DOMDocument $dom): string
     {
         if (empty($this->config->CSC) || empty($this->config->CSCid)) {
-            throw new \RuntimeException("O QRCode não pode ser criado pois faltam dados CSC e/ou CSCId");
+            throw new \RuntimeException("O QRCode nï¿½o pode ser criado pois faltam dados CSC e/ou CSCId");
         }
         $memmod = $this->modelo;
         $this->modelo = 62;
@@ -566,8 +566,8 @@ class Tools
         $check = $model == $this->modelo;
         $correct = 62;
         if (!$check) {
-            throw new InvalidArgumentException('Você passou um XML de modelo incorreto. '
-                . "Use o método \$tools->model({$correct}), para selecionar o "
+            throw new InvalidArgumentException('Vocï¿½ passou um XML de modelo incorreto. '
+                . "Use o mï¿½todo \$tools->model({$correct}), para selecionar o "
                 . 'modelo correto a ser usado');
         }
     }
