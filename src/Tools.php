@@ -169,7 +169,7 @@ class Tools extends ToolsCommon
         if (empty($chave) || empty($xJust) || empty($nProt)) {
             throw new InvalidArgumentException('Cancelamento: chave, just ou numprot vazio!');
         }
-        $uf = $this->validKeyByUF($chave);
+        $uf = $this->config->siglaUF ?? 'SP';
         $xJust = Strings::replaceUnacceptableCharacters(substr(trim($xJust), 0, 255));
         $nSeqEvento = 1;
         $nProt = str_pad($nProt, 16, "0", STR_PAD_LEFT);
